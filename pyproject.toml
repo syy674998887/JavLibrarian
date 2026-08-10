@@ -1,0 +1,37 @@
+[project]
+name = "jav-librarian"
+version = "0.1.0"
+description = "Lightweight, safety-first JAV media library organizer for NAS."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.11"
+dependencies = [
+    "pillow>=12.3.0",
+    "requests>=2.32.5",
+]
+
+[project.scripts]
+javlibrarian = "javlibrarian.cli:main"
+
+[project.urls]
+Repository = "https://github.com/syy674998887/JavLibrarian"
+Issues = "https://github.com/syy674998887/JavLibrarian/issues"
+
+[dependency-groups]
+test = [
+    "pytest>=8.4",
+]
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "--import-mode=importlib"
+testpaths = ["tests"]

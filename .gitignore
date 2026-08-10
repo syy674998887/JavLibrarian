@@ -1,0 +1,27 @@
+# Python environments and caches
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Local environment configuration
+.env
+.env.*
+!.env.example
+
+# Private operation logs (contain local paths and media filenames)
+folder_rename_log.json
+video_rename_log.json
+
+# OS and editor metadata
+.DS_Store
+.idea/
+.vscode/
+*.swp
