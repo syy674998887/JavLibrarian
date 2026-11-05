@@ -16,6 +16,10 @@ STD_ID = re.compile(r"^([A-Za-z]{2,7})[-_](\d{2,6})$")
 ANY_ID = re.compile(r"([A-Za-z]{2,7})[-_](\d{2,6})")
 FC2 = re.compile(r"FC2[-_]?(?:PPV[-_]?)?(\d{5,8})", re.I)
 
+# DMM content IDs zero-pad numbers to five digits (sone00035); catalog
+# numbers keep at least three (SONE-035).
+CATALOG_NUMBER_WIDTH = 3
+
 # Semantic suffixes are retained as NFO tags. Order matters: longer forms first.
 TAG_RULES = [
     (re.compile(r"-UC(?![A-Za-z0-9])", re.I), ["无码破解", "中文字幕"]),
@@ -87,7 +91,9 @@ def normalize(folder_name):
 
     match = CONTENT_ID.match(core)
     if match:
-        return f"{match.group(1).upper()}-{int(match.group(2))}", tags
+        prefix, padded_number = match.groups()
+        number = str(int(padded_number)).zfill(CATALOG_NUMBER_WIDTH)
+        return f"{prefix.upper()}-{number}", tags
 
     match = STD_ID.match(core)
     if match:

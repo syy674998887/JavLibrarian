@@ -439,6 +439,25 @@ def plan_video_renames(folders):
     return plan, duplicates, unrelated
 
 
+def plan_sidecar_moves(video, target_name):
+    """Pair each sidecar of *video* with its path once *video* is renamed.
+
+    A sidecar is ``<video stem>.<ext>``, optionally tagged, for example with a
+    subtitle language (``<video stem>.chs.srt``). Media centers attach sidecars
+    by this name prefix, so the tag is kept. ``movie.nfo`` belongs to the folder.
+    """
+    prefix = f"{video.stem}."
+    new_stem = Path(target_name).stem
+    return [
+        (path, path.with_name(new_stem + path.name[len(video.stem) :]))
+        for path in sorted(video.parent.iterdir())
+        if path.is_file()
+        and path.name.startswith(prefix)
+        and path.suffix.lower() in SIDECAR_EXT
+        and path.name.lower() != "movie.nfo"
+    ]
+
+
 def do_rename_videos(folders, log_path, apply=False):
     plan, duplicates, unrelated = plan_video_renames(folders)
 
@@ -511,16 +530,7 @@ def do_rename_videos(folders, log_path, apply=False):
             skip += 1
             continue
 
-        side_moves = []
-        for sidecar in folder.iterdir():
-            if (
-                sidecar.is_file()
-                and sidecar.name.lower() != "movie.nfo"
-                and sidecar.stem == video.stem
-                and sidecar.suffix.lower() in SIDECAR_EXT
-            ):
-                side_target = folder / (Path(target_name).stem + sidecar.suffix)
-                side_moves.append((sidecar, side_target))
+        side_moves = plan_sidecar_moves(video, target_name)
         planned_targets = {}
         for sidecar, side_target in side_moves:
             planned_targets.setdefault(side_target.name.lower(), []).append(sidecar.name)

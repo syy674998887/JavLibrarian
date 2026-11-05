@@ -14,6 +14,7 @@ from javlibrarian.catalog import list_folders, normalize, standard_name
         ("SONE-035-leak", ("SONE-035", ["无码流出"])),
         ("ipvr00256", ("IPVR-256", [])),
         ("vrkm01422", ("VRKM-1422", [])),
+        ("sone00035", ("SONE-035", [])),
         ("[LD-024] title", ("LD-024", [])),
         ("hhd800.com@SSIS-001", ("SSIS-001", [])),
         ("SONE-267.[4K]@R", ("SONE-267", [])),
@@ -31,6 +32,7 @@ def test_normalize_catalog_numbers(folder_name, expected):
     ("folder_name", "expected"),
     [
         ("ipvr00256-C", "IPVR-256-C"),
+        ("ssis00001-C", "SSIS-001-C"),
         ("SONE-035-UC", "SONE-035-UC"),
         ("SONE-035-leak", "SONE-035-U"),
         ("not-a-code", None),

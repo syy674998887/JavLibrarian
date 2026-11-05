@@ -192,7 +192,7 @@ A failed download, an undecodable image, or an image with a short edge below 200
 
 Folder and video workflows use independent rollback journals. Each rename action is written atomically to its journal before the filesystem is touched. Rollback verifies the media-library root and distinguishes completed, untouched, and partially completed entries.
 
-A video, its matching subtitles, and filename-matched NFO are handled as one group; folder-level `movie.nfo` is not renamed. If any target is occupied, the whole group is skipped. Rollback never overwrites an existing file.
+A video, its matching subtitles (including language-tagged ones such as `SONE-035.chs.srt`), and filename-matched NFO are handled as one group; folder-level `movie.nfo` is not renamed. If any target is occupied, the whole group is skipped. Rollback never overwrites an existing file.
 
 ---
 

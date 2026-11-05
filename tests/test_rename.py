@@ -9,6 +9,7 @@ from javlibrarian.rename import (
     do_undo_folders,
     do_undo_videos,
     plan_renames,
+    plan_sidecar_moves,
 )
 
 
@@ -193,6 +194,39 @@ def test_video_and_sidecar_are_journaled_and_rolled_back(tmp_path):
     assert source.exists() and source_sidecar.exists()
     assert not renamed.exists() and not renamed_sidecar.exists()
     assert not journal.exists()
+
+
+def test_sidecar_plan_keeps_tags_and_respects_name_boundary(tmp_path):
+    for name in ("abc123.mp4", "abc123.srt", "abc123.chs.ass", "abc1234.srt"):
+        (tmp_path / name).write_bytes(b"")
+
+    moves = plan_sidecar_moves(tmp_path / "abc123.mp4", "ABC-123.mp4")
+
+    assert [(source.name, target.name) for source, target in moves] == [
+        ("abc123.chs.ass", "ABC-123.chs.ass"),
+        ("abc123.srt", "ABC-123.srt"),
+    ]
+
+
+def test_tagged_subtitle_is_renamed_and_rolled_back_with_video(tmp_path):
+    root = tmp_path / "library"
+    folder = root / "SONE-035"
+    folder.mkdir(parents=True)
+    video = folder / "hhd800.com@SONE-035.mp4"
+    video.write_bytes(b"video")
+    subtitle = folder / "hhd800.com@SONE-035.chs.srt"
+    subtitle.write_bytes(b"subtitle")
+    journal = tmp_path / "video.json"
+
+    do_rename_videos([folder], journal, apply=True)
+
+    renamed_subtitle = folder / "SONE-035.chs.srt"
+    assert (folder / "SONE-035.mp4").exists() and renamed_subtitle.exists()
+
+    do_undo_videos(root, journal, apply=True)
+
+    assert video.exists() and subtitle.exists()
+    assert not renamed_subtitle.exists()
 
 
 def test_video_cleanup_never_treats_movie_nfo_as_sidecar(tmp_path):
