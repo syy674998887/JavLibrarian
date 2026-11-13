@@ -1,0 +1,25 @@
+name: Daily scraper source check
+
+on:
+  schedule:
+    - cron: '23 8 * * *'
+      timezone: America/New_York
+  workflow_dispatch:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: astral-sh/setup-uv@v10.3.3
+      - name: Install dependencies
+        run: uv sync --locked --python 3.11 --group test
+      - name: Offline unit tests
+        run: uv run --no-sync pytest -q
+      - name: Real JavBus and JavDB checks
+        run: uv run --no-sync python scripts/check_live_sources.py
